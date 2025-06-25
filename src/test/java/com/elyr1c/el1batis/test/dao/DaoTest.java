@@ -1,13 +1,18 @@
 package com.elyr1c.el1batis.test.dao;
 
-import com.elyr1c.el1batis.MapperProxy;
-import com.elyr1c.el1batis.MapperProxyFactory;
+import com.elyr1c.el1batis.common.lang.ClassScanner;
+import com.elyr1c.el1batis.mapper.MapperProxy;
+import com.elyr1c.el1batis.mapper.MapperProxyFactory;
+import com.elyr1c.el1batis.mapper.MapperRegister;
+import com.elyr1c.el1batis.session.SqlSession;
+import com.elyr1c.el1batis.session.SqlSessionFactory;
+import com.elyr1c.el1batis.session.defaults.DefaultSqlSessionFactory;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * @ClassName DaoTest
@@ -31,11 +36,39 @@ public class DaoTest {
     @Test
     public void testMapperProxy(){
         MapperProxyFactory<ITestDao> factory = new MapperProxyFactory<>(ITestDao.class);
-        Map<String,String> sqlSession = new HashMap<>();
-        sqlSession.put("com.elyr1c.el1batis.test.dao.ITestDao","test");
+        SqlSession sqlSession = new SqlSession() {
+            @Override
+            public <T> T selectOne(String statement) {
+                return null;
+            }
+
+            @Override
+            public <T> T selectOne(String statement, Object parameter) {
+                return null;
+            }
+
+            @Override
+            public <T> T getMapper(Class<T> type) {
+                return null;
+            }
+        };
         ITestDao proxy = factory.getMapperInstance(sqlSession);
-        String res = proxy.doSomething();
-        proxy.toString();
+        String res = proxy.toString();
         System.out.println(res);
+    }
+    @Test
+    public void TestClassScanner() throws IOException {
+        Set<Class<?>> srt = ClassScanner.scanPackage("com.elyr1c.el1batis.mapper");
+        srt.forEach(cls -> System.out.println(cls.getName()));
+    }
+    @Test
+    public void TestSqlSession() throws IOException {
+        MapperRegister register = new MapperRegister();
+        register.addMappers("com.elyr1c.el1batis.test.dao");
+        SqlSessionFactory factory = new DefaultSqlSessionFactory(register);
+        SqlSession sqlSession = factory.openSqlSession();
+        ITestDao mapper = sqlSession.getMapper(ITestDao.class);
+        String result = mapper.doSomething();
+        System.out.println(result);
     }
 }

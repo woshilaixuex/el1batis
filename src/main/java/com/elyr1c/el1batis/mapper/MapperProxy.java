@@ -1,11 +1,12 @@
-package com.elyr1c.el1batis;
+package com.elyr1c.el1batis.mapper;
+
+import com.elyr1c.el1batis.session.SqlSession;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -18,9 +19,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     @Serial
     private static final long serialVersionUID = -1L;
 
-    private final Map<String, String> sqlSession;
+    private final SqlSession sqlSession;
     private final Class<T> mapperInterface;
-    public MapperProxy(Map<String, String> sqlSession,Class<T> mapperInterface) {
+    public MapperProxy(SqlSession sqlSession,Class<T> mapperInterface) {
         this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
     }
@@ -30,7 +31,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         if (Object.class.equals(method.getDeclaringClass())) {
             return method.invoke(this,args);
         }else {
-            return "Mapper proxy:" + sqlSession.get(mapperInterface.getName()) + "-" + method.getName();
+            return sqlSession.selectOne(method.getName(), args);
         }
     }
 }

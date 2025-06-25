@@ -1,4 +1,6 @@
-package com.elyr1c.el1batis;
+package com.elyr1c.el1batis.mapper;
+
+import com.elyr1c.el1batis.session.SqlSession;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
@@ -15,7 +17,7 @@ public class MapperProxyFactory<T> {
         this.mapperInterface = mapperInterface;
     }
     @SuppressWarnings("unchecked")
-    public T getMapperInstance(Map<String,String> sqlSession) {
+    public T getMapperInstance(SqlSession sqlSession) {
         MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface);
         return (T) Proxy.newProxyInstance(
                 mapperInterface.getClassLoader(),
