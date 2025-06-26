@@ -8,4 +8,5 @@ package com.elyr1c.el1batis.test.dao;
  */
 public interface ITestDao {
     String doSomething();
+    String doSomething(String str);
 }

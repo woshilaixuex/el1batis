@@ -31,6 +31,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         if (Object.class.equals(method.getDeclaringClass())) {
             return method.invoke(this,args);
         }else {
+            if (args == null) return sqlSession.selectOne(method.getName());
             return sqlSession.selectOne(method.getName(), args);
         }
     }

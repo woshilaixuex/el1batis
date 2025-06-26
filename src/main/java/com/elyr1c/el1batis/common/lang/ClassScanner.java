@@ -15,12 +15,14 @@ import java.util.jar.JarInputStream;
  * @Date 2025/6/25 15:05
  */
 public class ClassScanner {
-    private static final Map<String, Set<Class<?>>> PACKAGE_CACHE = new ConcurrentHashMap<>();
-    private static final String CLASS_SUFFIX = ".class";
-
+    private static class Holder {
+        private static final ClassScanner INSTANCE = new ClassScanner();
+        private static final Map<String, Set<Class<?>>> PACKAGE_CACHE = new ConcurrentHashMap<>();
+        private static final String CLASS_SUFFIX = ".class";
+    }
     public static Set<Class<?>> scanPackage(String packageName) throws IOException {
-        if (PACKAGE_CACHE.containsKey(packageName)) {
-            return PACKAGE_CACHE.get(packageName);
+        if (Holder.PACKAGE_CACHE.containsKey(packageName)) {
+            return Holder.PACKAGE_CACHE.get(packageName);
         }
         Set<Class<?>> classes = new HashSet<>();
         String path = packageName.replace('.', '/');
@@ -29,14 +31,13 @@ public class ClassScanner {
 
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            System.out.println(resource);
             if (resource.getProtocol().equals("file")) {
                 classes.addAll(scanDirectory(new File(resource.getFile()), packageName));
             } else if (resource.getProtocol().equals("jar")) {
                 classes.addAll(scanJar(resource));
             }
         }
-        PACKAGE_CACHE.put(packageName, classes);
+        Holder.PACKAGE_CACHE.put(packageName, classes);
         return classes;
     }
     private static Set<Class<?>> scanDirectory(File directory, String packageName) {
@@ -51,8 +52,8 @@ public class ClassScanner {
         for (File file : files) {
             if (file.isDirectory()) {
                 classes.addAll(scanDirectory(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(CLASS_SUFFIX)) {
-                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - CLASS_SUFFIX.length());
+            } else if (file.getName().endsWith(Holder.CLASS_SUFFIX)) {
+                String className = packageName + '.' + file.getName().substring(0, file.getName().length() - Holder.CLASS_SUFFIX.length());
                 try {
                     classes.add(Class.forName(className));
                 } catch (ClassNotFoundException e) {
@@ -69,8 +70,8 @@ public class ClassScanner {
             JarEntry jarEntry;
             while ((jarEntry = jarInputStream.getNextJarEntry()) != null) {
                 String entryName = jarEntry.getName();
-                if (entryName.endsWith(CLASS_SUFFIX)) {
-                    String className = entryName.replace('/', '.').substring(0, entryName.length() - CLASS_SUFFIX.length());
+                if (entryName.endsWith(Holder.CLASS_SUFFIX)) {
+                    String className = entryName.replace('/', '.').substring(0, entryName.length() - Holder.CLASS_SUFFIX.length());
                     try {
                         classes.add(Class.forName(className));
                     } catch (ClassNotFoundException e) {

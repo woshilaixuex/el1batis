@@ -60,13 +60,21 @@ public class DaoTest {
     public void TestClassScanner() throws IOException {
         Set<Class<?>> srt = ClassScanner.scanPackage("com.elyr1c.el1batis.mapper");
         srt.forEach(cls -> System.out.println(cls.getName()));
+        Set<Class<?>> srt2 = ClassScanner.scanPackage("com.elyr1c.el1batis");
+        srt2.forEach(cls2 -> System.out.println(cls2.getName()));
     }
+
+    /**
+     * 每一个被代理的Mapper都一个SqlSession与其对应
+     * @throws IOException
+     */
     @Test
     public void TestSqlSession() throws IOException {
         MapperRegister register = new MapperRegister();
         register.addMappers("com.elyr1c.el1batis.test.dao");
         SqlSessionFactory factory = new DefaultSqlSessionFactory(register);
         SqlSession sqlSession = factory.openSqlSession();
+
         ITestDao mapper = sqlSession.getMapper(ITestDao.class);
         String result = mapper.doSomething();
         System.out.println(result);
