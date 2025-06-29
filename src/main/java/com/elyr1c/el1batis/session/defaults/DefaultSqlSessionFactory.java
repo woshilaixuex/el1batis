@@ -1,5 +1,6 @@
 package com.elyr1c.el1batis.session.defaults;
 
+import com.elyr1c.el1batis.Configuration;
 import com.elyr1c.el1batis.mapper.MapperRegister;
 import com.elyr1c.el1batis.session.SqlSession;
 import com.elyr1c.el1batis.session.SqlSessionFactory;
@@ -11,14 +12,14 @@ import com.elyr1c.el1batis.session.SqlSessionFactory;
  * @Date 2025/6/25 21:42
  */
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
-    private final MapperRegister mapperRegister;
+    private final Configuration configuration;
 
-    public DefaultSqlSessionFactory(MapperRegister mapperRegistry) {
-        this.mapperRegister = mapperRegistry;
+    public DefaultSqlSessionFactory(Configuration config) {
+        this.configuration = config;
     }
 
     @Override
     public SqlSession openSqlSession() {
-        return new DefaultSqlSession(mapperRegister);
+        return new DefaultSqlSession(configuration);
     }
 }

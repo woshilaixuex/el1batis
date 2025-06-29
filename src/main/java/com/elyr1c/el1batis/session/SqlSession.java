@@ -1,5 +1,7 @@
 package com.elyr1c.el1batis.session;
 
+import com.elyr1c.el1batis.Configuration;
+
 /**
  * @ClassName SqlSession
  * @Description TODO
@@ -29,6 +31,7 @@ public interface SqlSession {
      */
     <T> T selectOne(String statement, Object parameter);
 
+    Configuration getConfiguration();
     /**
      * Retrieves a mapper.
      * 得到映射器，这个巧妙的使用了泛型，使得类型安全

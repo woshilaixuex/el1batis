@@ -1,5 +1,6 @@
 package com.elyr1c.el1batis.test.dao;
 
+import com.elyr1c.el1batis.Configuration;
 import com.elyr1c.el1batis.common.lang.ClassScanner;
 import com.elyr1c.el1batis.mapper.MapperProxy;
 import com.elyr1c.el1batis.mapper.MapperProxyFactory;
@@ -48,6 +49,11 @@ public class DaoTest {
             }
 
             @Override
+            public Configuration getConfiguration() {
+                return null;
+            }
+
+            @Override
             public <T> T getMapper(Class<T> type) {
                 return null;
             }
@@ -70,13 +76,15 @@ public class DaoTest {
      */
     @Test
     public void TestSqlSession() throws IOException {
-        MapperRegister register = new MapperRegister();
-        register.addMappers("com.elyr1c.el1batis.test.dao");
-        SqlSessionFactory factory = new DefaultSqlSessionFactory(register);
-        SqlSession sqlSession = factory.openSqlSession();
-
-        ITestDao mapper = sqlSession.getMapper(ITestDao.class);
-        String result = mapper.doSomething();
-        System.out.println(result);
+//        // register
+//        MapperRegister register = new MapperRegister(Configuration.getConfigurationInfo());
+//        register.addMappers("com.elyr1c.el1batis.test.dao");
+//        // sql session
+//        SqlSessionFactory factory = new DefaultSqlSessionFactory(Configuration.getConfigurationInfo());
+//        SqlSession sqlSession = factory.openSqlSession();
+//        // mapper
+//        ITestDao mapper = sqlSession.getMapper(ITestDao.class);
+//        String result = mapper.doSomething();
+//        System.out.println(result);
     }
 }

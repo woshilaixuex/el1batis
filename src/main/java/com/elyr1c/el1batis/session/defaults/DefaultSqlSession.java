@@ -1,6 +1,8 @@
 package com.elyr1c.el1batis.session.defaults;
 
+import com.elyr1c.el1batis.Configuration;
 import com.elyr1c.el1batis.mapper.MapperRegister;
+import com.elyr1c.el1batis.mapping.MappedStatement;
 import com.elyr1c.el1batis.session.SqlSession;
 
 /**
@@ -13,9 +15,9 @@ public class DefaultSqlSession implements SqlSession {
     /**
      * 映射器注册机
      */
-    private MapperRegister mapperRegister;
-    public DefaultSqlSession(MapperRegister mapperRegistry) {
-        this.mapperRegister = mapperRegistry;
+    private Configuration configuration;
+    public DefaultSqlSession(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
@@ -25,11 +27,17 @@ public class DefaultSqlSession implements SqlSession {
 
     @Override
     public <T> T selectOne(String statement, Object parameter) {
-        return (T) ("你被代理了！" + "方法：" + statement + " 入参：" + parameter.getClass());
+        MappedStatement mappedStatement = configuration.getMappedStatement(statement);
+        return (T) ("你被代理了！" + "\n方法：" + statement + "\n入参：" + parameter + "\n待执行SQL：" + mappedStatement.getSql());
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     @Override
     public <T> T getMapper(Class<T> type) {
-        return mapperRegister.getMapper(type, this);
+        return configuration.getMapper(type, this);
     }
 }
